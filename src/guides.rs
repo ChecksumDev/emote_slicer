@@ -5,6 +5,9 @@ use image::Rgba;
 use image::ImageBuffer;
 use rand::Rng;
 
+const TWITCH_EMOTE_SIZES: [u32; 3] = [28, 56, 112];
+const TWITCH_BADGE_SIZES: [u32; 3] = [18, 36, 72];
+
 pub fn highlight_non_transparent_pixels(
     image: &ImageBuffer<Rgba<u8>, Vec<u8>>,
     non_transparent_pixels: &HashSet<(usize, usize)>,
@@ -64,4 +67,25 @@ pub fn create_group_image(
     }
 
     group_image
+}
+
+pub fn make_resized_images(
+    pixels: &ImageBuffer<Rgba<u8>, Vec<u8>>,
+    name: &str,
+) -> Vec<ImageBuffer<Rgba<u8>, Vec<u8>>> {
+    let sizes = [TWITCH_EMOTE_SIZES, TWITCH_BADGE_SIZES].concat();
+
+    sizes
+        .iter()
+        .map(|&size| {
+            let resized =
+                image::imageops::resize(pixels, size, size, image::imageops::FilterType::Lanczos3);
+
+            resized
+                .save(format!("emotes/{}/{}.png", name, size))
+                .unwrap();
+
+            resized
+        })
+        .collect()
 }

@@ -2,7 +2,9 @@ pub mod guides;
 pub mod image_processing;
 
 use image::ImageBuffer;
-use std::error::Error;
+use std::{error::Error, fs};
+
+use crate::guides::make_resized_images;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let image = image::open("emotes.png")?.to_rgba8();
@@ -17,17 +19,19 @@ fn main() -> Result<(), Box<dyn Error>> {
         guides::highlight_non_transparent_pixels(&pixels, &non_transparent_pixels);
     highlighted_pixels.save("debug/highlighted_emotes.png")?;
 
-    let groups = image_processing::find_connected_groups(&non_transparent_pixels, &pixels);
-    let highlighted_groups = guides::highlight_connected_groups(&pixels, &groups);
+    let emotes = image_processing::find_connected_groups(&non_transparent_pixels, &pixels);
+    let highlighted_groups = guides::highlight_connected_groups(&pixels, &emotes);
     highlighted_groups.save("debug/highlighted_groups_emotes.png")?;
 
-    std::fs::create_dir_all("groups")?;
-    for (i, group) in groups.iter().enumerate() {
+    for (i, group) in emotes.iter().enumerate() {
         let group_image = guides::create_group_image(&pixels, group);
-        group_image.save(format!("groups/group_{}.png", i))?;
+        fs::create_dir_all(format!("emotes/{}", i))?;
+        group_image.save(format!("emotes/{}/original.png", i))?;
+
+        make_resized_images(&group_image, &i.to_string());
     }
 
-    println!("Connected groups: {}", groups.len());
+    println!("Connected groups: {}", emotes.len());
 
     Ok(())
 }
