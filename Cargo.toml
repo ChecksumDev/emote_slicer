@@ -6,6 +6,14 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow = "1.0.81"
 image = "0.25.1"
 ndarray = "0.15.6"
+oxipng = { version = "9.0", features = [
+    "parallel",
+    "zopfli",
+    "filetime",
+    "image",
+], default-features = false }
 rand = "0.8.5"
+rayon = "1.10.0"
