@@ -27,6 +27,7 @@ fn main() -> anyhow::Result<()> {
     fs::create_dir_all("emotes")?;
     for (i, group) in groups.iter().enumerate() {
         println!("Processing {}/{}", i + 1, groups.len());
+        fs::create_dir_all(format!("emotes/{}", i))?;
 
         let image = image_processing::make_group_image(&images, &group);
         image.save(format!("emotes/{}/original.png", i))?;
