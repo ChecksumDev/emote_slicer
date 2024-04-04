@@ -23,6 +23,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     let highlighted_groups = guides::highlight_connected_groups(&pixels, &emotes);
     highlighted_groups.save("debug/highlighted_groups_emotes.png")?;
 
+    let bounding_boxes = image_processing::calculate_bounding_boxes(&emotes);
+    let image_with_bounding_boxes = guides::highlight_bounding_boxes(&pixels, &bounding_boxes);
+    image_with_bounding_boxes.save("debug/emotes_with_bounding_boxes.png")?;
+
     for (i, group) in emotes.iter().enumerate() {
         let group_image = guides::create_group_image(&pixels, group);
         fs::create_dir_all(format!("emotes/{}", i))?;
