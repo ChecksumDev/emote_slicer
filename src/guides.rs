@@ -37,6 +37,7 @@ pub fn highlight_connected_groups(
             highlighted_groups.put_pixel(x as u32, y as u32, color);
         }
     }
+
     highlighted_groups
 }
 
@@ -66,7 +67,15 @@ pub fn create_group_image(
         );
     }
 
-    group_image
+    let target_size = 448;
+    let resized = image::imageops::resize(
+        &group_image,
+        target_size,
+        target_size,
+        image::imageops::FilterType::Lanczos3,
+    );
+
+    resized
 }
 
 pub fn make_resized_images(
